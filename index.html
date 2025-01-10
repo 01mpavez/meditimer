@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temporizador de Meditación</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+      color: #333;
+      padding: 50px;
+    }
+    #time {
+      font-size: 48px;
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Temporizador de Meditación</h1>
+  <div id="time">20:00</div>
+  <button id="start">Iniciar</button>
+  <audio id="gong" src="gong.mp3" preload="auto"></audio>
+
+  <script>
+    let countdown;
+    let totalSeconds = 20 * 60; // 20 minutos en segundos.
+    const display = document.getElementById('time');
+    const startButton = document.getElementById('start');
+    const gong = document.getElementById('gong');
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      startButton.disabled = true;
+      countdown = setInterval(() => {
+        if (totalSeconds > 0) {
+          totalSeconds--;
+          display.textContent = formatTime(totalSeconds);
+        } else {
+          clearInterval(countdown);
+          gong.play();
+          setTimeout(() => {
+            totalSeconds = 2 * 60; // 2 minutos extra.
+            countdown = setInterval(() => {
+              if (totalSeconds > 0) {
+                totalSeconds--;
+                display.textContent = formatTime(totalSeconds);
+              } else {
+                clearInterval(countdown);
+                gong.play();
+                display.textContent = '¡Meditación terminada!';
+              }
+            }, 1000);
+          }, 1000);
+        }
+      }, 1000);
+    }
+
+    startButton.addEventListener('click', startTimer);
+  </script>
+</body>
+</html>
